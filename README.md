@@ -25,7 +25,7 @@ from mltoolkit_laht.datasets import load_banking_reviews_data
 data_reader = dp.DataSource(data=load_banking_reviews_data())
 
 # ============================== Data Preprocessing ==============================
-BankReviews = data_reader.load_data(encoding="ISO-8859-1", sep=",")
+BankReviews = data_reader.load_data()
 BankReviews["Date"] = pd.to_datetime(BankReviews["Date"], format="%d-%m-%Y")
 BankReviews["Year"] = BankReviews["Date"].dt.year
 BankReviews["text_length"] = BankReviews.Reviews.apply(lambda x: len(x))
