@@ -1,5 +1,5 @@
 import unittest
-from my_ds_ml_toolkit import visualization
+from mltoolkit_laht import visualization
 
 class TestVisualization(unittest.TestCase):
     def test_plot_data(self):

@@ -1,5 +1,5 @@
 import unittest
-from my_ds_ml_toolkit import models
+from mltoolkit_laht import models
 
 class TestModels(unittest.TestCase):
 

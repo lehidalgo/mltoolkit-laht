@@ -1,5 +1,5 @@
 import unittest
-from my_ds_ml_toolkit import utils
+from mltoolkit_laht import utils
 
 class TestUtils(unittest.TestCase):
     def test_sample_util_function(self):

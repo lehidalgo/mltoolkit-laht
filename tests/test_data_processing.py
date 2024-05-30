@@ -1,5 +1,5 @@
 import unittest
-from my_ds_ml_toolkit import data_processing
+from mltoolkit_laht import data_processing
 
 class TestDataProcessing(unittest.TestCase):
 
