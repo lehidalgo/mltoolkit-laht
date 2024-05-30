@@ -1,32 +1,54 @@
 import pandas as pd
+import numpy as np
+from IPython.display import display
 
-from typing import Any, TypeVar
-import pandas as pd
-
-T = TypeVar('T', bound='pd.DataFrame')
 
 class DataSource:
-    @staticmethod
-    def load_data(file_path: str, **kwargs) -> T:
+
+    SCHEMA_UPDATED = False
+
+    def __init__(self, data: pd.DataFrame = None, file_path: str = None) -> None:
+        self.file_path = file_path
+        self.data = data
+
+        if not isinstance(self.data, pd.DataFrame) and self.file_path is None:
+            raise ValueError("Please provide either a DataFrame or a file path.")
+
+    def load_data(self, **kwargs) -> pd.DataFrame:
         """
         Load data from a CSV file.
 
         Parameters:
-        file_path (str): Path to the CSV file.
+        **kwargs: specific parameters for the read_csv or read_pickle method.
 
         Returns:
-        DataFrame: Loaded data.
+        None
         """
-        file_extension = file_path.split('.')[-1]
-        if file_extension == 'csv':
-            return pd.read_csv(file_path, **kwargs)
-        elif file_extension == 'pkl' or file_extension == 'pickle':
-            return pd.read_pickle(file_path, **kwargs)
+        if isinstance(self.data, pd.DataFrame):
+            print("Loading data from DataFrame...")
+            return self.data
         else:
-            raise ValueError(f"Unsupported file type: {file_path}. Only read pkl, pickle, and csv files.")
+            print("Loading data from a file...")
+            file_extension = self.file_path.split(".")[-1]
+            if file_extension == "csv":
+                self.data = pd.read_csv(self.file_path, **kwargs)
+            elif file_extension == "pkl" or file_extension == "pickle":
+                self.data = pd.read_pickle(self.file_path, **kwargs)
+            else:
+                raise ValueError(
+                    f"Unsupported file type: {self.file_path}. Only read pkl, pickle, and csv files."
+                )
+            return self.data
 
-    @staticmethod
-    def show_info(title: str, to_show: Any) -> None:
+    def get_schema(self) -> dict:
+        return self.data.dtypes.apply(lambda x: x.name).to_dict()
+
+    def update_schema(self, new_schema: dict) -> None:
+        self.data = self.data.astype(new_schema)
+        SCHEMA_UPDATED = True
+        return self.data
+
+    def show_df_info(self, num_rows: int = None, describe_all: str = "all") -> None:
         """
         Print the title and the content to show.
 
@@ -37,10 +59,32 @@ class DataSource:
         Returns:
         None
         """
-        print(f"{title}:\n{'-'*10}\n{to_show}\n{'_'*100}\n")
+        if num_rows:
+            pd.set_option("display.max_rows", num_rows)
+
+        decor_title = "-" * 10
+        decor_section = "=" * 100
+
+        print(f"{decor_section}")
+        print(f"SAMPLE:\n{decor_title}")
+        display(self.data.head())
+        print(f"\n{decor_section}\n")
+        print(f"SCHEMA:\n{decor_title}\n{self.data.dtypes}\n{decor_section}\n")
+        print(f"DATAFRAME SHAPE:\n{decor_title}\n{self.data.shape}\n{decor_section}\n")
+        print(f"NANs:\n{decor_title}\n{self.data.isna().sum()}\n{decor_section}\n")
+        print(
+            f"GENERAL DUPLICATED:\n{decor_title}\n{self.data.duplicated().sum()}\n{decor_section}\n"
+        )
+        print(f"STATISTICS:\n{decor_title}")
+        display(self.data.describe(include=describe_all, datetime_is_numeric=True))
+        print(f"\n{decor_section}\nINFO:\n")
+        print(f"{decor_title}\n{self.data.info()}\n{decor_section}")
+        for col in self.data.select_dtypes(exclude=np.number).columns:
+            if pd.api.types.is_categorical_dtype(self.data[col]):
+                display(self.data[col].value_counts())
 
     @staticmethod
-    def clean_data(df: T) -> T:
+    def clean_data(df: pd.DataFrame) -> None:
         """
         Clean the input DataFrame.
 
@@ -53,7 +97,7 @@ class DataSource:
         raise NotImplementedError("This method needs to be implemented")
 
     @staticmethod
-    def transform_data(df: T) -> T:
+    def transform_data(df: pd.DataFrame) -> None:
         """
         Transform the input DataFrame.
 
