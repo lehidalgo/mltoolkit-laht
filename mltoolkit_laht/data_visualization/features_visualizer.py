@@ -30,9 +30,9 @@ class FeaturesVisualizer(BaseVisualizer):
         elif isinstance(data, pd.DataFrame):
             features = [(name, series) for name, series in data.items()]
         else:
-            raise ValueError(
-                "Unsupported data type. Only support pandas Series or DataFrame."
-            )
+            msg = "Unsupported data type. Only support pandas Series or DataFrame."
+            self.logger.error(msg)
+            raise ValueError(msg)
 
         numerical_features = [
             (name, series)
@@ -57,7 +57,7 @@ class FeaturesVisualizer(BaseVisualizer):
                 plot_type="Numerical",
             )
         else:
-            print("No numerical data to plot.")
+            self.logger.info("No numerical data to plot.")
 
         # Plot categorical data
         if categorical_features:
@@ -69,7 +69,7 @@ class FeaturesVisualizer(BaseVisualizer):
                 plot_type="Categorical",
             )
         else:
-            print("No categorical data to plot.")
+            self.logger.info("No categorical data to plot.")
 
     def _plot_features(
         self,
@@ -84,7 +84,9 @@ class FeaturesVisualizer(BaseVisualizer):
     ):
         if combine_plots:
             if not features_to_combine:
-                raise ValueError("A list of features to combine must be provided.")
+                msg = "A list of features to combine must be provided."
+                self.logger.error(msg)
+                raise ValueError(msg)
             plt.figure(figsize=self.figsize)
             for name, series in data:
                 if name in features_to_combine:
