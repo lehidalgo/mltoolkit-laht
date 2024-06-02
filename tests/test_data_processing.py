@@ -1,5 +1,6 @@
 import unittest
-from mltoolkit_laht import data_processing
+from mltoolkit_laht.data_preprocessing import data_processing
+
 
 class TestDataProcessing(unittest.TestCase):
 
@@ -16,5 +17,6 @@ class TestDataProcessing(unittest.TestCase):
 
     # Add more test methods as needed
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     unittest.main()
