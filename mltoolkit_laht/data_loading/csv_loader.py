@@ -80,7 +80,7 @@ class CSVLoader(BaseLoader):
             print(f"{decor_section}\n{name}:\n{decor_section}")
             print(content)
 
-        print(f"{decor_section}\nINFO:\n{decor_section}")
+        print(f"{decor_section}\nSAMPLE:\n{decor_section}")
         display(data.head())
         print_section("SCHEMA", data.dtypes)
         print_section("DATAFRAME SHAPE", data.shape)
@@ -92,12 +92,13 @@ class CSVLoader(BaseLoader):
         print(f"{decor_section}\nINFO:\n{decor_section}")
         data.info(verbose=True)
 
+        print(f"{decor_section}\nCATEGORICAL VARIABLES:\n{decor_section}")
         categorical_columns = data.select_dtypes(exclude=np.number).columns
         categorical_value_counts = [
-            data[col].value_counts()
+            (col, data[col].value_counts())
             for col in categorical_columns
             if pd.api.types.is_categorical_dtype(data[col])
         ]
-
-        for value_counts in categorical_value_counts:
+        for col, value_counts in categorical_value_counts:
+            print(f"{decor_title}\n{col}:\n{decor_title}")
             display(value_counts)
