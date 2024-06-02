@@ -3,14 +3,14 @@ import importlib.resources as pkg_resources
 
 # from .pkl_loader import PKLLoader
 from .csv_loader import CSVLoader
+from .excel_loader import ExcelLoader
 
-# from .excel_loader import ExcelLoader
 # from .json_loader import JSONLoader
 
 _all_ = [
     "load_banking_reviews_data",
     "CSVLoader",
-    # "ExcelLoader",
+    "ExcelLoader",
     # "JSONLoader",
 ]
 

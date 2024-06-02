@@ -3,17 +3,21 @@ import pandas as pd
 import numpy as np
 from IPython.display import display
 from .base_loader import BaseLoader
-from ..utils.logger import Logger
 
 
 class CSVLoader(BaseLoader):
-    def __init__(self, data: pd.DataFrame = None, file_path: str = None) -> None:
-        self.file_path = file_path
+    def __init__(
+        self,
+        file_path: str = None,
+        data: pd.DataFrame = None,
+    ) -> None:
+        super().__init__(file_path)
         self.data = data
-        self.logger = Logger.setup_logger(self.__class__.__name__)
 
         if not isinstance(self.data, pd.DataFrame) and self.file_path is None:
-            raise ValueError("Please provide either a DataFrame or a file path.")
+            msg = "Please provide either a DataFrame or a file path."
+            self.logger.error(msg)
+            raise ValueError(msg)
 
     def load_data(self, **kwargs) -> pd.DataFrame:
         """
@@ -30,7 +34,7 @@ class CSVLoader(BaseLoader):
             file_extension = file_extension[1:]  # remove the leading dot
 
         if isinstance(self.data, pd.DataFrame):
-            print("Loading data from DataFrame...")
+            self.logger.info("Loading data from DataFrame.")
             return self.data
         else:
             if file_extension == "csv":
@@ -70,20 +74,28 @@ class CSVLoader(BaseLoader):
         decor_section = "=" * 100
         data = self.data  # load data once
 
-        print(f"{decor_section}\nSAMPLE:\n{decor_section}")
-        display(data.head())
-        print(f"{decor_section}\nSCHEMA:\n{decor_section}")
-        print(data.dtypes)
-        print(f"{decor_section}\nDATAFRAME SHAPE:\n{decor_section}")
-        print(data.shape)
-        print(f"{decor_section}\nNANs:\n{decor_section}")
-        print(data.isna().sum())
-        print(f"{decor_section}\nGENERAL DUPLICATED:\n{decor_section}")
-        print(data.duplicated().sum())
-        print(f"{decor_section}\nSTATISTICS:\n{decor_section}")
-        display(data.describe(include=describe_all, datetime_is_numeric=True))
+        def print_section(name, content):
+            print(f"{decor_section}\n{name}:\n{decor_section}")
+            print(content)
+
+        print_section("SAMPLE", data.head())
+        print_section("SCHEMA", data.dtypes)
+        print_section("DATAFRAME SHAPE", data.shape)
+        print_section("NANs", data.isna().sum())
+        print_section("GENERAL DUPLICATED", data.duplicated().sum())
+        print_section(
+            "STATISTICS", data.describe(include=describe_all, datetime_is_numeric=True)
+        )
+
         print(f"{decor_section}\nINFO:\n{decor_section}")
-        print(data.info())
-        for col in data.select_dtypes(exclude=np.number).columns:
-            if pd.api.types.is_categorical_dtype(data[col]):
-                display(data[col].value_counts())
+        data.info(verbose=True)
+
+        categorical_columns = data.select_dtypes(exclude=np.number).columns
+        categorical_value_counts = [
+            data[col].value_counts()
+            for col in categorical_columns
+            if pd.api.types.is_categorical_dtype(data[col])
+        ]
+
+        for value_counts in categorical_value_counts:
+            display(value_counts)

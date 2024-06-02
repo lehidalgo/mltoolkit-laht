@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import Tuple
+from ..utils.logger import Logger
 
 
 class BaseVisualizer(ABC):
@@ -15,3 +16,4 @@ class BaseVisualizer(ABC):
         self.title = title
         self.x_label = x_label
         self.y_label = y_label
+        self.logger = Logger.setup_logger(self.__class__.__name__)

@@ -1,8 +1,12 @@
 from abc import ABC, abstractmethod
-import pandas as pd
+from ..utils.logger import Logger
 
 
 class BaseLoader(ABC):
+
+    def __init__(self, file_path):
+        self.file_path = file_path
+        self.logger = Logger.setup_logger(self.__class__.__name__)
 
     @abstractmethod
     def load_data(self):
