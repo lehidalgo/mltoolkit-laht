@@ -1,9 +1,8 @@
 from abc import ABC, abstractmethod
-from typing import Dict, Tuple, Any
-import matplotlib.pyplot as plt
+from typing import Tuple
 
 
-class BasePlot(ABC):
+class BaseVisualizer(ABC):
     @abstractmethod
     def __init__(
         self,
