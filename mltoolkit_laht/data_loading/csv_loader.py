@@ -58,11 +58,13 @@ class CSVLoader(BaseLoader):
 
     def show_info(self, num_rows: int = None, describe_all: str = "all") -> None:
         """
-        Print the title and the content to show.
+        Show data information, including the first few rows, schema, shape, NANs, duplicates, and statistics.
 
         Parameters:
-        title (str): The title to print.
-        to_show (Any): The content to print.
+        - num_rows (int): The number of rows to display. If None, all rows will be displayed.
+        - describe_all (str): The option to include all columns in the describe method.
+          Possible values: "all", "None", "number", "category", "datetime", "timedelta".
+          Default is "all".
 
         Returns:
         None
@@ -78,14 +80,14 @@ class CSVLoader(BaseLoader):
             print(f"{decor_section}\n{name}:\n{decor_section}")
             print(content)
 
-        print_section("SAMPLE", data.head())
+        print(f"{decor_section}\nINFO:\n{decor_section}")
+        display(data.head())
         print_section("SCHEMA", data.dtypes)
         print_section("DATAFRAME SHAPE", data.shape)
         print_section("NANs", data.isna().sum())
         print_section("GENERAL DUPLICATED", data.duplicated().sum())
-        print_section(
-            "STATISTICS", data.describe(include=describe_all, datetime_is_numeric=True)
-        )
+        print(f"{decor_section}\nSTATISTICS:\n{decor_section}")
+        display(data.describe(include=describe_all))
 
         print(f"{decor_section}\nINFO:\n{decor_section}")
         data.info(verbose=True)
