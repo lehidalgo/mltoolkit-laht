@@ -1,4 +1,4 @@
-# mltoolkit-laht 0.2.0
+# mltoolkit-laht 0.2.1
 
 This is a Python library for data science and machine learning tasks. It provides utilities for data processing, modeling, and visualization.
 
