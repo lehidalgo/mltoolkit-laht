@@ -14,27 +14,7 @@ pip install .
 
 ## Usage
 
-Here is a basic example of how to use this toolkit:
-
-```python
-import pandas as pd
-from mltoolkit_laht import data_processing as dp
-from mltoolkit_laht.datasets import load_banking_reviews_data
-
-# ============================== Load Data ==============================
-data_reader = dp.DataSource(data=load_banking_reviews_data())
-
-# ============================== Data Preprocessing ==============================
-BankReviews = data_reader.load_data()
-BankReviews["Date"] = pd.to_datetime(BankReviews["Date"], format="%d-%m-%Y")
-BankReviews["Year"] = BankReviews["Date"].dt.year
-BankReviews["text_length"] = BankReviews.Reviews.apply(lambda x: len(x))
-
-# ============================== Data Exploration ==============================
-data_reader.show_df_info(num_rows=100)
-```
-
-Full example in Tutorials directory.
+Full examples in Tutorials directory.
 
 ## Testing
 
